@@ -107,48 +107,36 @@ public class IntList {
     		if(nodeA!=null) {
     			head=new IntList(nodeA.first,null);
     			nodeNew=head;
-//    			nodeNew=cat(nodeNew,nodeA);
-    			while(nodeA.rest!=null) {
-    				nodeA=nodeA.rest;
-    				nodeNew.rest=new IntList(nodeA.first,null);
-    				nodeNew=nodeNew.rest;
-    			}
+    			nodeNew=cat(nodeNew,nodeA);
+    			
     			if(nodeB==null)
     				return head;
     			else {
     				nodeNew.rest=new IntList(nodeB.first,null);
     				nodeNew=nodeNew.rest;    				
-//        			cat(nodeNew,nodeB);
-    				while(nodeB.rest!=null) {
-        				nodeB=nodeB.rest;
-        				nodeNew.rest=new IntList(nodeB.first,null);
-        				nodeNew=nodeNew.rest;
-        			}
+        			cat(nodeNew,nodeB);
+    				
     			}
     		}
     		else {
     			head=new IntList(nodeB.first,null);
     			nodeNew=head;
-//    			cat(nodeNew,nodeB);
-    			while(nodeB.rest!=null) {
-    				nodeB=nodeB.rest;
-    				nodeNew.rest=new IntList(nodeB.first,null);
-    				nodeNew=nodeNew.rest;
-    			}
+    			cat(nodeNew,nodeB);
+    			
     		}
     		return head;
     	}
     }
 
 
-//public static IntList cat(IntList nodeNew,IntList node) {
-//	while(node.rest!=null) {
-//		node=node.rest;
-//		nodeNew.rest=new IntList(node.first,null);
-//		nodeNew=nodeNew.rest;
-//	}
-//	return nodeNew;
-//}
+public static IntList cat(IntList nodeNew,IntList node) {
+	while(node.rest!=null) {
+		node=node.rest;
+		nodeNew.rest=new IntList(node.first,null);
+		nodeNew=nodeNew.rest;
+	}
+	return nodeNew;
+}
 
 
 
