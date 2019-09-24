@@ -23,8 +23,10 @@ public class GuitarString {
     	int capacity=(int) Math.round(SR/frequency);
     	
 //    	ArrayRingBuffer<Double> ringBuff = new ArrayRingBuffer<Double>(capacity);
-    	buffer= new ArrayRingBuffer<Double>(capacity);
-    	pluck();
+    	buffer = new ArrayRingBuffer<Double>(capacity);
+    	for(int i=0;i<capacity;i++) {
+    		buffer.enqueue(0.0);
+    	}
     }
 
 
@@ -67,9 +69,7 @@ public class GuitarString {
 
     /* Return the double at the front of the buffer. */
     public double sample() {
-    	if(buffer.isEmpty()) {
-    		throw new RuntimeException("Ring Buffer Underflow");
-    	}
+    	
         // TODO: Return the correct thing.
         return buffer.peek();
     }
