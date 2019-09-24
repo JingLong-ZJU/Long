@@ -25,10 +25,10 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
         //       this.capacity should be set appropriately. Note that the local variable
         //       here shadows the field we inherit from AbstractBoundedQueue, so
         //       you'll need to use this.capacity to set the capacity.
-    	this.capacity=capacity;
+    	super.capacity=capacity;
     	this.first=0;
     	this.last=0;
-    	this.fillCount=0;
+    	super.fillCount=0;
     	this.rb = (T[])new Object[capacity];
     }
 
