@@ -2,7 +2,6 @@
 //package <package name>;
 package synthesizer;
 
-import java.util.ArrayList;
 
 //Make sure this class is public
 public class GuitarString {
@@ -14,7 +13,6 @@ public class GuitarString {
 
     /* Buffer for storing sound data. */
     private BoundedQueue<Double> buffer;
-    ArrayList<String> alphago =new ArrayList<String>();
     
     /* Create a guitar string of the given frequency.  */
     public GuitarString(double frequency) {
@@ -27,7 +25,6 @@ public class GuitarString {
 //    	ArrayRingBuffer<Double> ringBuff = new ArrayRingBuffer<Double>(capacity);
     	buffer= new ArrayRingBuffer<Double>(capacity);
     	pluck();
-    	alphago.iterator();
     }
 
 
@@ -56,20 +53,23 @@ public class GuitarString {
         //       Do not call StdAudio.play().
     	double front = buffer.dequeue();
     	double next = buffer.peek();
-    	//¹ÄÉù
+    	//drum
 //    	if(Math.random()>0.5) {
 //        	buffer.enqueue((front+next)*0.5);   		
 //    	}
 //    	else {
 //        	buffer.enqueue(-(front+next)*0.5);
 //    	}
-    	//¼ªËû
+    	//guitar
     	buffer.enqueue((front+next)*0.5*DECAY);
 
     }
 
     /* Return the double at the front of the buffer. */
     public double sample() {
+    	if(buffer.isEmpty()) {
+    		throw new RuntimeException("Ring Buffer Underflow");
+    	}
         // TODO: Return the correct thing.
         return buffer.peek();
     }
