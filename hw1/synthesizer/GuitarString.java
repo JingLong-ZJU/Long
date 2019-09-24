@@ -1,6 +1,9 @@
 // TODO: Make sure to make this class a part of the synthesizer package
 //package <package name>;
 package synthesizer;
+
+import java.util.ArrayList;
+
 //Make sure this class is public
 public class GuitarString {
     /** Constants. Do not change. In case you're curious, the keyword final means
@@ -11,7 +14,8 @@ public class GuitarString {
 
     /* Buffer for storing sound data. */
     private BoundedQueue<Double> buffer;
-
+    ArrayList<String> alphago =new ArrayList<String>();
+    
     /* Create a guitar string of the given frequency.  */
     public GuitarString(double frequency) {
         // TODO: Create a buffer with capacity = SR / frequency. You'll need to
@@ -23,6 +27,7 @@ public class GuitarString {
 //    	ArrayRingBuffer<Double> ringBuff = new ArrayRingBuffer<Double>(capacity);
     	buffer= new ArrayRingBuffer<Double>(capacity);
     	pluck();
+    	alphago.iterator();
     }
 
 
@@ -51,7 +56,16 @@ public class GuitarString {
         //       Do not call StdAudio.play().
     	double front = buffer.dequeue();
     	double next = buffer.peek();
+    	//¹ÄÉù
+//    	if(Math.random()>0.5) {
+//        	buffer.enqueue((front+next)*0.5);   		
+//    	}
+//    	else {
+//        	buffer.enqueue(-(front+next)*0.5);
+//    	}
+    	//¼ªËû
     	buffer.enqueue((front+next)*0.5*DECAY);
+
     }
 
     /* Return the double at the front of the buffer. */

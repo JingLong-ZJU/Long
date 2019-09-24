@@ -4,6 +4,7 @@
 package synthesizer;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 //TODO: Make sure to make this class and all of its methods public
 //TODO: Make sure to make this class extend AbstractBoundedQueue<t>
@@ -75,5 +76,38 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
 	    return rb[first];
     }
 
+	@Override
+	public Iterator<T> iterator() {
+		// TODO Auto-generated method stub
+		return new ArrayRingBufferIterator();
+	}
+
     // TODO: When you get to part 5, implement the needed code to support iteration.
+	 private class ArrayRingBufferIterator implements Iterator<T>{
+		private int cursor=0;       // index of next element to return 
+		private int count=0;
+		
+		public ArrayRingBufferIterator () {
+			cursor = first;
+			count = 0;
+        }
+		@Override
+		public boolean hasNext() {			
+			return count!=capacity;
+		}
+
+		@Override
+		public T next() {
+			if(!hasNext()) {
+				throw new NoSuchElementException();
+			}
+			else {
+				T element = rb[cursor++];
+				cursor=cursor%capacity;
+				count++;
+				return element;
+			}
+		}
+		 
+	 }
 }
