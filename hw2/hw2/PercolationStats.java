@@ -23,7 +23,7 @@ public class PercolationStats {
 				exp.open(row, col);				
 			}
 			if(exp.percolates()) {
-				ratio[i]=(double) exp.numberOfOpenSites()/N;
+				ratio[i]=(double) exp.numberOfOpenSites()/(N*N);
 			}
 		}
 	}
@@ -44,5 +44,10 @@ public class PercolationStats {
 	public double confidenceHigh() {
 		// high endpoint of 95% confidence interval
 		return StdStats.mean(ratio)+1.96*StdStats.stddev(ratio)/Math.sqrt(times);	
+	}
+	public static void main(String[] args) {
+		
+		PercolationStats get = new PercolationStats(10,10,new PercolationFactory());
+		System.out.println(get.mean());
 	}
 }

@@ -6,8 +6,8 @@ public class Percolation {
 	private int[][] chess;
 	private int sideLength;
 	private int countOpen=0;
-	WeightedQuickUnionUF uf;
-	WeightedQuickUnionUF uf_top;
+	private WeightedQuickUnionUF uf;
+	private WeightedQuickUnionUF uf_top;
 	private int top;
 	private int bottom;	
 	private int[][] neighborDirection = {{0,1},{1,0},{-1,0},{0,-1}};
@@ -80,5 +80,8 @@ public class Percolation {
 	public boolean percolates() {
 		// does the system percolate?
 		return countOpen>0&&uf.connected(top, bottom);
+	}
+	public static void main(String[] args) {
+		
 	}
 }
