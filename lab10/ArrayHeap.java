@@ -177,8 +177,9 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     		return null;
     	}
     	T removeContent = peek();
-    	contents[1] = contents[size--];
+    	contents[1] = contents[size];
     	sink(1);
+    	contents[size--] = null;
         return removeContent;
     }
 
