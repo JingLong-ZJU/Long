@@ -3,7 +3,7 @@ import edu.princeton.cs.algs4.Queue;
 public class Board implements WorldState  {
 	private int size;
 	private int[][] tiles;
-	public final int BLANK = 0;
+	private final int BLANK = 0;
     /** Returns the string representation of the board. 
       * Uncomment this method. */
 	  public Board(int[][] tiles) {
@@ -19,7 +19,7 @@ public class Board implements WorldState  {
 		  }
 	  }
 	  
-	  public void validateIndex(int i, int j) {
+	  private void validateIndex(int i, int j) {
 		  if(i<0||i>=size()||j<0||j>=size()) {
 			  throw new IndexOutOfBoundsException("invalid index");
 		  }
@@ -62,8 +62,8 @@ public class Board implements WorldState  {
 				  if(value == this.BLANK)
 					  continue;
 				  if(value != getRightValue(i,j)) {
-					  int wrongRow = value/this.size();
-					  int wrongCol = value%this.size() - 1;
+					  int wrongRow = (value-1)/this.size();
+					  int wrongCol = (value-1)%this.size();
 					  count += Math.abs(wrongRow - i);
 					  count += Math.abs(wrongCol - j);
 				  }

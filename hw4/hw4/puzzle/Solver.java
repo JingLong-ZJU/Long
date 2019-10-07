@@ -57,7 +57,7 @@ public class Solver {
     	solution = reverseSolution;
     }
     
-    public SearchNode getResult(SearchNode result) {
+    private SearchNode getResult(SearchNode result) {
     	if(result.previous == null) {
     		solution.add(result.word);
     		return result;
