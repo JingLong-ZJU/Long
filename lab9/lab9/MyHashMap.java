@@ -120,13 +120,13 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         throw new UnsupportedOperationException();
     }
     
-//    public static void main(String[] args) {
-//    	 MyHashMap<String, Integer> b = new MyHashMap<String, Integer>();
-//         String s = "";
-//         for (int i = 0; i < 13; i++) {
-//        	 s = "hi" + i;
-//    		 b.put(s, i);
-//         }
-//         System.out.println(b.size);    	 
-//    }
+    public static void main(String[] args) {
+    	 MyHashMap<String, Integer> b = new MyHashMap<String, Integer>();
+         String s = "";
+         for (int i = 0; i < 13; i++) {
+        	 s = "hi" + i;
+    		 b.put(s, i);
+         }
+         System.out.println(b.size);    	 
+    }
 }

@@ -2,6 +2,7 @@ package hw2;
 
 import edu.princeton.cs.introcs.StdRandom;
 import edu.princeton.cs.introcs.StdStats;
+import edu.princeton.cs.introcs.Stopwatch;
 
 public class PercolationStats {
 	private double[] ratio;	//threshold
@@ -45,4 +46,12 @@ public class PercolationStats {
 		// high endpoint of 95% confidence interval
 		return StdStats.mean(ratio)+1.96*StdStats.stddev(ratio)/Math.sqrt(times);	
 	}
+	//for test
+//	public static void main (String[] args) {
+//		Stopwatch testWatch = new Stopwatch();
+//		PercolationStats test = new PercolationStats(60,100,new PercolationFactory());
+//		System.out.println(test.mean());
+//		System.out.println(testWatch.elapsedTime());
+//		
+//	}
 }
