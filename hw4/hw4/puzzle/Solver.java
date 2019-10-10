@@ -69,7 +69,7 @@ public class Solver {
 		solution.add(result.word);
     	return result;
     }
-    
+    	
     public int moves() {
     	return solution.size()-1;
     }
