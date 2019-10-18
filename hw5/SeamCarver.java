@@ -7,9 +7,9 @@ public class SeamCarver {
 	private double[][] energyMatrix;
 	private double[][] M;
 	private double[][] MT;//the M matrix after transpose
-	boolean isVertical = true;
+	private boolean isVertical = true;
     public SeamCarver(Picture picture) {
-    	this.picture = picture;
+    	this.picture = new Picture(picture);
     	regeneration();
     }
     
