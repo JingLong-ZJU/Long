@@ -9,13 +9,13 @@ import byog.TileEngine.Tileset;
 
 
 public class RandomWorldGenerator {
-	private static final int WIDTH = 40;
+	private static final int WIDTH = 30;
     private static final int HEIGHT = 15;
     
-    private static final Position START_POSITION = new Position(1, 1);
+    private static final Position START_POSITION = new Position(2, 2);
     private static final Direction initDirection = Direction.RIGHT;
     
-    private static final long SEED = 2873123;
+    private static final long SEED = 2875123;
     private static final Random RANDOM = new Random(SEED);
     
     private static TETile[][] randomWorld;
@@ -33,7 +33,7 @@ public class RandomWorldGenerator {
     	worldNodeStack = new Stack<worldNode>();
     	for (int x = 0; x < WIDTH; x += 1) {
             for (int y = 0; y < HEIGHT; y += 1) {
-            	randomWorld[x][y] = Tileset.NOTHING;
+            	randomWorld[x][y] = Tileset.WALL;
             	worldDescription[x][y] = new worldNode(new Position(x, y));
             }
         }
@@ -45,7 +45,7 @@ public class RandomWorldGenerator {
     	for (int i = 0; i < width; i += 1) {
             for (int j = 0; j < height; j += 1) {
             	if(worldDescription[i][j].walls)
-            		world[i][j] = Tileset.WALL;
+            		world[i][j] = Tileset.NOTHING;
             }
         }
     }
@@ -63,18 +63,29 @@ public class RandomWorldGenerator {
     	do {
     		nextPosition = getNextPosition(curPosition, preDirection);
     		if(!worldDescription[nextPosition.x][nextPosition.y].isInit) {
-    			getValidDirection(nextPosition, preDirection);
+    			worldDescription[nextPosition.x][nextPosition.y].validDirection = getValidDirection(preDirection);
     			worldDescription[nextPosition.x][nextPosition.y].isInit = true;
     		}
     		direction = getNextDirection(nextPosition,preDirection);
     		if(direction == null) {
     			worldNode node;
     			do {
-    				node = worldNodeStack.pop();
-    				worldDescription[node.position.x][node.position.y].walls = false;
+    				try {
+    					node = worldNodeStack.pop();
+    				}
+    				catch (EmptyStackException e) {
+    					System.out.println(worldNodeStack.isEmpty());
+    					return;
+//    					throw new EmptyStackException();
+    				}
+    				
+//    				worldDescription[node.position.x][node.position.y].walls = false;
     				worldDescription[node.position.x][node.position.y].validDirection.
     					remove(worldDescription[node.position.x][node.position.y].direction);
-    			}while(node.validDirection.size() < 1);
+    			}while((node.validDirection.size() < 1) && !worldNodeStack.isEmpty());
+    			
+    			if(worldNodeStack.isEmpty())return;
+    			
     			curPosition = node.position;
     			preDirection = node.validDirection.get(RANDOM.nextInt(node.validDirection.size()));
     		}
@@ -103,51 +114,124 @@ public class RandomWorldGenerator {
     
     private static boolean validNextDirection(Position currentPosition, Direction direction) {
     	Position position1 = getNextPosition(currentPosition, direction);
-    	Position position2 = getNextPosition(position1, direction);
     	if(!validPosition(position1) || worldDescription[position1.x][position1.y].walls)
     		return false;
-    	else if(validPosition(position2) && !worldDescription[position2.x][position2.y].walls)
-			return true;
-    	else return false;
+    	
+//    	List<Direction> list = getValidDirection(direction);
+//    	Position positionA = getNextPosition(position1, list.get(0));
+//    	Position positionB = getNextPosition(position1, list.get(1));
+//    	Position positionC = getNextPosition(position1, list.get(2));
+//    	
+//    	if(validPosition(positionA) && worldDescription[positionA.x][positionA.y].walls 
+//    			|| validPosition(positionB) && worldDescription[positionB.x][positionB.y].walls
+//    			|| validPosition(positionC) && worldDescription[positionC.x][positionC.y].walls)
+//    		return false;
+    	if(direction.equals(direction.TOP)) {
+    		List<Position> fivePo = new ArrayList<Position>() {{
+    			add(new Position(position1.x, position1.y + 1));
+    			add(new Position(position1.x-1, position1.y));
+    			add(new Position(position1.x+1, position1.y));
+    			add(new Position(position1.x-1, position1.y + 1));
+    			add(new Position(position1.x+1, position1.y + 1));
+    		}};
+    		Iterator<Position> iterator = fivePo.iterator();
+    		while(iterator.hasNext()) {
+    			Position i = iterator.next();
+        		if(validPosition(i) && worldDescription[i.x][i.y].walls) {
+        			return false;
+        		}
+        	}
+    		return true;
+    	}
+    	else if(direction.equals(direction.BOTTOM)) {
+    		List<Position> fivePo = new ArrayList<Position>() {{
+    			add(new Position(position1.x, position1.y - 1));
+    			add(new Position(position1.x-1, position1.y));
+    			add(new Position(position1.x+1, position1.y));
+    			add(new Position(position1.x-1, position1.y - 1));
+    			add(new Position(position1.x+1, position1.y - 1));
+    		}};
+    		Iterator<Position> iterator = fivePo.iterator();
+    		while(iterator.hasNext()) {
+    			Position i = iterator.next();
+        		if(validPosition(i) && worldDescription[i.x][i.y].walls) {
+        			return false;
+        		}
+        	}
+    		return true;
+    	}
+    	else if(direction.equals(direction.RIGHT)) {
+    		List<Position> fivePo = new ArrayList<Position>() {{
+    			add(new Position(position1.x+1, position1.y));
+    			add(new Position(position1.x, position1.y+1));
+    			add(new Position(position1.x, position1.y-1));
+    			add(new Position(position1.x+1, position1.y+1));
+    			add(new Position(position1.x+1, position1.y-1));
+    		}};
+    		Iterator<Position> iterator = fivePo.iterator();
+    		while(iterator.hasNext()) {
+    			Position i = iterator.next();
+        		if(validPosition(i) && worldDescription[i.x][i.y].walls) {
+        			return false;
+        		}
+        	}
+    		return true;
+    	}
+    	else {
+    		List<Position> fivePo = new ArrayList<Position>() {{
+    			add(new Position(position1.x-1, position1.y));
+    			add(new Position(position1.x, position1.y+1));
+    			add(new Position(position1.x, position1.y-1));
+    			add(new Position(position1.x-1, position1.y+1));
+    			add(new Position(position1.x-1, position1.y-1));
+    		}};
+    		Iterator<Position> iterator = fivePo.iterator();
+    		while(iterator.hasNext()) {
+    			Position i = iterator.next();
+        		if(validPosition(i) && worldDescription[i.x][i.y].walls) {
+        			return false;
+        		}
+        	}
+    		return true;
+    	}
+    	
     }
     
-    private static void getValidDirection(Position currentPosition, Direction direction) {
+    private static ArrayList<Direction> getValidDirection(Direction direction) {
     	switch(direction) {
 	    	case TOP:{
-	    		worldDescription[currentPosition.x][currentPosition.y].validDirection
-	    		 = new ArrayList<Direction>() {{
+	    		 return new ArrayList<Direction>() {{
 	    			add(Direction.TOP);
 	    			add(Direction.RIGHT);
 	    			add(Direction.LEFT);
 	    		 }};
 	    	}
 	    	case BOTTOM:{
-	    		worldDescription[currentPosition.x][currentPosition.y].validDirection
-	    		 = new ArrayList<Direction>() {{
+	    		 return new ArrayList<Direction>() {{
 	    			add(Direction.BOTTOM);
 	    			add(Direction.RIGHT);
 	    			add(Direction.LEFT);
 	    		 }};
 	    	}
 	    	case LEFT:{
-	    		worldDescription[currentPosition.x][currentPosition.y].validDirection
-	    		 = new ArrayList<Direction>() {{
+	    		 return new ArrayList<Direction>() {{
 	    			add(Direction.BOTTOM);
 	    			add(Direction.TOP);
 	    			add(Direction.LEFT);
 	    		 }};
 	    	}
 	    	case RIGHT:{
-	    		worldDescription[currentPosition.x][currentPosition.y].validDirection
-	    		 = new ArrayList<Direction>() {{
+	    		 return new ArrayList<Direction>() {{
 	    			add(Direction.BOTTOM);
 	    			add(Direction.TOP);
 	    			add(Direction.RIGHT);
 	    		 }};
 	    	}
-	    	default:return;
+	    	default:return null;
     	}
     }
+    
+    
     
     private static boolean validPosition(Position position) {
     	return !(position.x >= WIDTH || position.x < 0 || position.y >= HEIGHT || position.y < 0);
