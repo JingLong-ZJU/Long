@@ -1,6 +1,7 @@
 package byog.Core;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
+import byog.TileEngine.TileHumanSet;
 import byog.TileEngine.Tileset;
 import java.util.Random;
 
@@ -10,21 +11,25 @@ import java.util.Random;
  */
 
 public class PlaceRooms {
-    private static final int minRoomSize = 3;
-    private static final int maxRoomSize = 6;
-    private static final int MAP_WIDTH = 72;
-    private static final int MAP_HEIGHT = 30;
-    private static final int maxRooms = 18;
-    private static final int minRooms = 14;
+    private static final int minRoomSize = 1;
+    private static final int maxRoomSize = 4;
+//    private static final int MAP_WIDTH = 72;
+//    private static final int MAP_HEIGHT = 30;
+    private static final int MAP_WIDTH = 40;
+    private static final int MAP_HEIGHT = 14;
+//    private static final int maxRooms = 18;
+//    private static final int minRooms = 14;
+    private static final int maxRooms = 9;
+    private static final int minRooms = 8;
     private static int ptr = 0;
     private static long SEED = 2783245;
     private static Random RANDOM = new Random(SEED);
-    public  Point player1;
-    public  Point door;
+    public  Position player;
+    public  Position door;
 
     public PlaceRooms(long seed){
-        SEED = seed;
-        RANDOM = new Random(SEED);
+        this.SEED = seed;
+        this.RANDOM = new Random(SEED);
     }
 
     public void addMaze(TETile[][] world, TETile t){
@@ -44,10 +49,10 @@ public class PlaceRooms {
                 }
             }
 
-            Point newCenter = newRoom.center;
+            Position newCenter = newRoom.center;
 
             if (ptr != 0){
-                Point prevCenter = rooms[ptr-1].center;
+                Position prevCenter = rooms[ptr-1].center;
                 Corridors corridor = new Corridors();
                 if (RANDOM.nextInt(2) == 1){
                     Corridors.hCorridor hc = corridor.new hCorridor(prevCenter.x, newCenter.x, prevCenter.y);
@@ -66,10 +71,10 @@ public class PlaceRooms {
             }
             ptr++;
         }
-        world[rooms[5].center.x][rooms[5].center.y] = Tileset.PLAYER;
+        world[rooms[5].center.x][rooms[5].center.y] = TileHumanSet.Kaws;
         world[rooms[7].center.x][rooms[7].center.y] = Tileset.LOCKED_DOOR;
-        player1 = new Point(rooms[5].center.x, rooms[5].center.y);
-        door = new Point(rooms[7].center.x, rooms[7].center.y);
+        this.player = new Position(rooms[5].center.x, rooms[5].center.y);
+        this.door = new Position(rooms[7].center.x, rooms[7].center.y);
     }
     public void addWall(TETile[][] world, TETile t){
         int count = 0;

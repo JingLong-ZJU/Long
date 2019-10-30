@@ -13,7 +13,7 @@ import java.awt.Font;
  */
 public class TERenderer {
 //    private static final int TILE_SIZE = 16;
-	private static final int TILE_SIZE = 16;
+	private static final int TILE_SIZE = 48;
     private int width;
     private int height;
     private int xOffset;

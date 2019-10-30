@@ -1,6 +1,11 @@
 package byog.TileEngine;
 import java.awt.Color;
-
+/*
+ * This set is uesd for 48*48 char or png file
+ * 
+ * 
+ * 
+ */
 public class TileHumanSet {
 	public static final TETile Monroe = new TETile('a', Color.green, Color.black, "Monroe", "./48_48png/Monroe.png");
     public static final TETile Harry_Potter = new TETile('a', Color.green, Color.black, "Harry_Potter", "./48_48png/Harry Potter.png");

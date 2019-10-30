@@ -5,29 +5,51 @@ import java.util.*;
 
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
+import byog.TileEngine.TileHumanSet;
 import byog.TileEngine.Tileset;
 
 
+/*
+ * Generate a random maze in the world
+ * 
+ */
+
 public class RandomWorldGenerator {
-	private static final int WIDTH = 30;
-    private static final int HEIGHT = 15;
+	private static final int WIDTH = 40;
+    private static final int HEIGHT = 13;
     
     private static final Position START_POSITION = new Position(2, 2);
     private static final Direction initDirection = Direction.RIGHT;
     
-    private static final long SEED = 2875123;
-    private static final Random RANDOM = new Random(SEED);
+    private static long SEED = 2875123;
+    private static Random RANDOM = new Random(SEED);
     
     private static TETile[][] randomWorld;
     private static worldNode[][] worldDescription;
     
     private static Stack<worldNode> worldNodeStack;
+   
+    private static Position player;
+    private static Position door;
     
-    
-    private RandomWorldGenerator() {
+    public RandomWorldGenerator(Long seed) {
+    	this.SEED = seed;
+    	RANDOM = new Random(this.SEED);
     }
     
-    private static void initialWorld() {
+    public static TETile[][] getRandomWorld(){
+    	return randomWorld;
+    }
+    
+    public static Position getPlayer(){
+    	return player;
+    }
+    
+    public static Position getDoor(){
+    	return door;
+    }
+    
+    public static void initialWorld() {
     	randomWorld = new TETile[WIDTH][HEIGHT];
     	worldDescription = new worldNode[WIDTH][HEIGHT];
     	worldNodeStack = new Stack<worldNode>();
@@ -39,18 +61,35 @@ public class RandomWorldGenerator {
         }
     }
     
-    private static void addWallsToWorld(TETile[][] world) {
-    	int width = world.length;
-    	int height = world[0].length;
-    	for (int i = 0; i < width; i += 1) {
-            for (int j = 0; j < height; j += 1) {
-            	if(worldDescription[i][j].walls)
-            		world[i][j] = Tileset.NOTHING;
+    public static void addWallsToWorld() {
+    	int width = randomWorld.length;
+    	int height = randomWorld[0].length;
+    	int flag = 0;
+    	for (int i = width - 1; i >= 0; i -= 1) {
+            for (int j = height - 1; j >= 0; j -= 1) {
+            	if(worldDescription[i][j].walls) {
+            		randomWorld[i][j] = Tileset.FLOOR;
+            		if(flag == 0) {
+            			randomWorld[i][j] = Tileset.LOCKED_DOOR;
+            			door = new Position(i,j);
+            			flag = 1;
+            		}
+            	}
             }
         }
+    	for (int i = 0; i < width; i += 1) {
+            for (int j = 0; j < height; j += 1) {
+            	if(worldDescription[i][j].walls) {
+            		player = new Position(i, j);
+                	randomWorld[player.x][player.y] = TileHumanSet.Kaws;
+            		return;
+            	}
+            }
+        }
+    	
     }
     
-    private static void GenerateClosedWall() {
+    public static void GenerateClosedWall() {
     	worldDescription[START_POSITION.x][START_POSITION.y].walls = true;
     	worldDescription[START_POSITION.x][START_POSITION.y].direction = initDirection;
     	worldDescription[START_POSITION.x][START_POSITION.y].validDirection = new ArrayList<Direction>() {{
@@ -257,7 +296,7 @@ public class RandomWorldGenerator {
         ter.initialize(WIDTH, HEIGHT);
         initialWorld();
         GenerateClosedWall();
-        addWallsToWorld(randomWorld);
+        addWallsToWorld();
         ter.renderFrame(randomWorld);
     }
     

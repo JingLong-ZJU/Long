@@ -3,6 +3,7 @@ package byog.TileEngine;
 import java.awt.Color;
 
 /**
+ * This set is uesd for 16*16 char or png file
  * Contains constant tile objects, to avoid having to remake the same tiles in different parts of
  * the code.
  *
@@ -15,6 +16,7 @@ import java.awt.Color;
  * The style checker may crash when you try to style check this file due to use of unicode
  * characters. This is OK.
  */
+
 
 public class Tileset {
 	
@@ -36,8 +38,8 @@ public class Tileset {
     public static final TETile MOUNTAIN = new TETile('▲', Color.gray, Color.black, "mountain");
     public static final TETile TREE = new TETile('♠', Color.green, Color.black, "tree");
     
-    
-
+    public static final TETile HEART = new TETile('♠', Color.green, Color.black, "heart", "./16_16png/heart.png");
+    public static final TETile Harry_Potter = new TETile('♠', Color.green, Color.black, "Harry Potter", "./16_16png/Harry Potter.png");
 }
 
 	

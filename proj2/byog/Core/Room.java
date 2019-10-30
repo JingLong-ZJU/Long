@@ -14,14 +14,14 @@ public class Room {
      public int w;
      public int h;
 
-     public Point center;
+     public Position center;
 
      public Room(int x, int y, int w, int h){
          this.x1 = x;
          this.x2 = x + w;
          this.y1 = y;
          this.y2 = y + h;
-         this.center = new Point((int)Math.floor((x1 + x2) / 2),
+         this.center = new Position((int)Math.floor((x1 + x2) / 2),
                  (int)Math.floor((y1 + y2) / 2));
      }
 }

@@ -1,0 +1,525 @@
+package byog.Core;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+import byog.TileEngine.TERenderer;
+import byog.TileEngine.TETile;
+import byog.TileEngine.Tileset;
+import edu.princeton.cs.algs4.StdDraw;
+
+public class Game {
+    public TERenderer ter = new TERenderer();
+    /* Feel free to change the width and height. */
+    public static final int WIDTH = 72;
+    public static final int HEIGHT = 30;
+    private static int MouseX;
+    private static int MouseY;
+    public boolean win = false;
+    public static TETile[][] finalWorldFrame;
+    private Life life;
+    private Position player;
+    private Position door;
+    /**
+     * Method used for playing a fresh game. The game should start from the main menu.
+     */
+    //MINE
+//    public void playWithKeyboard() {
+//    	GUI_Initial();
+//        drawGUI();
+//        while (true) {
+//            if (StdDraw.hasNextKeyTyped()) {
+//                break;
+//            }
+//        }
+//        char c = StdDraw.nextKeyTyped();
+//        if (c == 'N' || c == 'n'){
+//            newGame();
+//            System.exit(0);
+//        }
+//        else if(c == 'L' || c == 'l') {
+//        	String filename = "";
+//        	try {
+//				ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename));
+//	        	finalWorldFrame = (TETile[][]) in.readObject();
+//	        	this.player = (Position) in.readObject();
+//	        	this.door  = (Position) in.readObject();
+//	        	this.life = (Life) in.readObject();
+//	        	in.close();
+//	        	ter.renderFrame(finalWorldFrame);
+//                System.out.println("Object has been deserialized ");
+//                operation();
+//                System.exit(0);
+//        	} catch (FileNotFoundException e) {
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			} catch (ClassNotFoundException e) {
+//				e.printStackTrace();
+//			}
+//        }
+//        else if (c == 'Q' || c == 'q'){
+//            System.exit(0);
+//        }
+//        
+//    }
+    
+    public void playWithKeyboard() {
+        GUI_Initial();
+        drawGUI();
+        while (true) {
+            if (StdDraw.hasNextKeyTyped()) {
+                break;
+            }
+        }
+        char c = StdDraw.nextKeyTyped();
+        if (c == 'N' || c == 'n'){
+            newGame();
+            System.exit(0);
+        } else if (c == 'L' || c == 'l'){
+           TETile[][] object1 = null;
+           Position player1 = null;
+           Position door1 = null;
+           Life LIFE1 = null;
+           String filename = "file.ser";
+           String filename1 = "file1.ser";
+           String filename2 = "file2.ser";
+           String filename3 = "file3.ser";
+            // Deserialization
+            try
+            {
+                // Reading the object from a file
+                FileInputStream file = new FileInputStream(filename);
+                ObjectInputStream in = new ObjectInputStream(file);
+                FileInputStream file1 = new FileInputStream(filename1);
+                ObjectInputStream in1 = new ObjectInputStream(file1);
+                FileInputStream file2 = new FileInputStream(filename2);
+                ObjectInputStream in2 = new ObjectInputStream(file2);
+                FileInputStream file3 = new FileInputStream(filename3);
+                ObjectInputStream in3 = new ObjectInputStream(file3);
+
+                // Method for deserialization of object
+                object1 = (TETile[][]) in.readObject();
+                finalWorldFrame = object1;
+                player1 = (Position) in1.readObject();
+                player = player1;
+                door1 = (Position) in2.readObject();
+                door = door1;
+                LIFE1 = (Life) in3.readObject();
+                this.life = LIFE1;
+
+                in.close();
+                file.close();
+                in1.close();
+                file1.close();
+                in2.close();
+                file2.close();
+                in3.close();
+                file3.close();
+                ter.renderFrame(finalWorldFrame);
+                System.out.println("Object has been deserialized ");
+                operation();
+                System.exit(0);
+            } catch(IOException ex) {
+                System.out.println("IOException is caught");
+            } catch(ClassNotFoundException ex)
+            {
+                System.out.println("ClassNotFoundException is caught");
+            }
+
+        }else if (c == 'Q' || c == 'q'){
+            System.exit(0);
+        }
+
+    }
+    
+    
+    public void newGame(){
+        ter.initialize(WIDTH, HEIGHT);
+        finalWorldFrame = new TETile[WIDTH][HEIGHT];
+        String input = "";
+        drawSeed(input);
+        while (true){
+            if (!StdDraw.hasNextKeyTyped()) {
+                continue;
+            }
+            char c = StdDraw.nextKeyTyped();
+            if (c == 'S'){
+                break;
+            }
+            input += String.valueOf(c);
+            drawGUI();
+            drawSeed(input);
+        }
+        Long seed = toDigit(input);
+
+        for (int x = 0; x < WIDTH; x += 1) {
+            for (int y = 0; y < HEIGHT; y += 1) {
+                finalWorldFrame[x][y] = Tileset.NOTHING;
+            }
+        }
+        PlaceRooms PLACEROOMS = new PlaceRooms(seed);
+        TETile t = Tileset.FLOOR;
+        PLACEROOMS.addMaze(finalWorldFrame,t);
+        t = Tileset.WALL;
+        PLACEROOMS.addWall(finalWorldFrame,t);
+        player = PLACEROOMS.player;
+        door = PLACEROOMS.door;
+        life = new Life(5);
+        finalWorldFrame = drawLife(finalWorldFrame, life.life);
+        ter.renderFrame(finalWorldFrame);
+        operation();
+    }
+    
+    
+    //MINE
+//    public void newGame() {
+//    	this.ter.initialize(WIDTH, HEIGHT);
+//    	finalWorldFrame = new TETile[WIDTH][HEIGHT];
+//    	String input = "";
+//    	drawSeed(input);
+//    	while (true){
+//            if (!StdDraw.hasNextKeyTyped()) {
+//                continue;
+//            }
+//            char c = StdDraw.nextKeyTyped();
+//            if (c == 'S'){
+//                break;
+//            }
+//            input += String.valueOf(c);
+//            drawGUI();
+//            drawSeed(input);
+//        }
+//    	Long seed = toDigit(input);
+//    	PlaceRooms rooms = new PlaceRooms(seed);
+//    	rooms.initial(finalWorldFrame, Tileset.NOTHING);
+//    	rooms.addMaze(finalWorldFrame, Tileset.FLOOR);
+//    	rooms.addWall(finalWorldFrame, Tileset.WALL);
+//    	
+//    	player = rooms.player;
+//        door = rooms.door;
+//        
+//        this.life = new Life(5);
+//        drawLife(finalWorldFrame, life.life);
+//    	drawHelp();
+//        ter.renderFrame(finalWorldFrame);
+//        operation();
+//    }
+    
+    public void operation(){
+        while (true){
+            if(StdDraw.hasNextKeyTyped()){
+                char c = StdDraw.nextKeyTyped();
+                if (c  == 'Q'){
+                    String filename = "file.ser";
+                    String filename1 = "file1.ser";
+                    String filename2 = "file2.ser";
+                    String filename3 = "file3.ser";
+
+                    // Serialization
+                    try
+                    {
+                        //Saving of object in a file
+                        FileOutputStream file = new FileOutputStream(filename);
+                        ObjectOutputStream out = new ObjectOutputStream(file);
+                        FileOutputStream file1 = new FileOutputStream(filename1);
+                        ObjectOutputStream out1 = new ObjectOutputStream(file1);
+                        FileOutputStream file2 = new FileOutputStream(filename2);
+                        ObjectOutputStream out2 = new ObjectOutputStream(file2);
+                        FileOutputStream file3 = new FileOutputStream(filename3);
+                        ObjectOutputStream out3 = new ObjectOutputStream(file3);
+
+                        // Method for serialization of object
+                        out.writeObject(finalWorldFrame);
+                        out1.writeObject(player);
+                        out2.writeObject(door);
+                        out3.writeObject(this.life);
+
+                        out.close();
+                        file.close();
+                        out1.close();
+                        file1.close();
+                        out2.close();
+                        file2.close();
+                        out3.close();
+                        file3.close();
+
+                        System.out.println("Object has been serialized");
+
+                    } catch(IOException ex)
+                    {
+                        System.out.println("IOException is caught");
+                    }
+                    break;
+                }
+                playerMove(c);
+                finalWorldFrame = drawLife(finalWorldFrame, this.life.life);
+                ter.renderFrame(finalWorldFrame);
+                if (win){
+                    System.exit(0);
+                }else if (this.life.life == 0){
+                    System.exit(0);
+                }
+                try
+                {
+                    Thread.sleep(10);
+                }
+                catch(InterruptedException ex)
+                {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            if(StdDraw.isMousePressed()){
+                MouseX = (int)StdDraw.mouseX();
+                MouseY = (int)StdDraw.mouseY();
+                String des = finalWorldFrame[MouseX][MouseY].description();
+                drawHUD(des);
+                ter.renderFrame(finalWorldFrame);
+                try
+                {
+                    Thread.sleep(1000);
+                }
+                catch(InterruptedException ex)
+                {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+    }
+    
+    
+    
+//    public void operation() {
+//    	while(true) {
+//    		if(StdDraw.hasNextKeyTyped()) {
+//    			char c = StdDraw.nextKeyTyped();
+//    			stepWithChar(c);
+//    		}
+//    		if(StdDraw.isMousePressed()){
+//                MouseX = (int)StdDraw.mouseX();
+//                MouseY = (int)StdDraw.mouseY();
+//                String des = finalWorldFrame[MouseX][MouseY].description();
+//                drawHUD(des);
+//                ter.renderFrame(finalWorldFrame);
+//                try
+//                {
+//                    Thread.sleep(1000);
+//                }
+//                catch(InterruptedException ex)
+//                {
+//                    Thread.currentThread().interrupt();
+//                }
+//            }
+//    		
+//    	}
+//    }
+    
+    private void stepWithChar(char c) {
+    	if (c == 'Q' || c == 'q') {
+			String filename = "save.file";
+			try {
+				ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filename));
+				out.writeObject(finalWorldFrame);
+                out.writeObject(this.player);
+                out.writeObject(this.door);
+                out.writeObject(this.life);
+                out.close();
+                System.out.println("Saved");
+                System.exit(0);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+    	
+		playerMove(c);
+		finalWorldFrame = drawLife(finalWorldFrame, this.life.life);
+        ter.renderFrame(finalWorldFrame);
+		
+		if (win){
+            System.exit(0);
+        }else if (this.life.life == 0){
+            System.exit(0);
+        }
+		try
+        {
+            Thread.sleep(10);
+        }
+        catch(InterruptedException ex)
+        {
+            Thread.currentThread().interrupt();
+        }
+    }
+    
+    public void drawHUD(String des) {
+        for (int i = 0; i < 15; i++){
+            finalWorldFrame[i][HEIGHT-1] = Tileset.NOTHING;
+        }
+        for (int i = 0; i < des.length(); i++){
+            finalWorldFrame[i][HEIGHT-1] = new TETile (des.toCharArray()[i], Color.white, Color.black, "nothing");
+        }
+    }
+    
+    private void drawHelp() {
+    	for (int i = 25; i < 45; i++){
+            finalWorldFrame[i][HEIGHT-1] = Tileset.NOTHING;
+        }
+    	String des = "Press 'Q' to quit!";
+        for (int i = 25; i < des.length(); i++){
+            finalWorldFrame[i][HEIGHT-1] = new TETile (des.toCharArray()[i], Color.white, Color.black, "nothing");
+        }
+    }
+    
+    public void drawSeed(String s){
+//    	StdDraw.clear();
+//        StdDraw.clear(Color.black);
+        
+        Font smallFont = new Font("Monaco", Font.CENTER_BASELINE, 20);
+        StdDraw.setFont(smallFont);
+        StdDraw.setPenColor(Color.white);
+        StdDraw.text(((double)WIDTH)/2, 6.0, "SEED: "+s);
+        StdDraw.text(((double)WIDTH)/2, 3.0, "Press 'S' to end up your input!");
+        StdDraw.show();
+    }
+    public void GUI_Initial(){
+        StdDraw.setCanvasSize(this.WIDTH * 16, this.HEIGHT * 16);
+        StdDraw.setXscale(0, this.WIDTH);
+        StdDraw.setYscale(0, this.HEIGHT);
+        StdDraw.clear(Color.BLACK);
+        StdDraw.enableDoubleBuffering();
+    }
+    
+    public void drawGUI() {
+        StdDraw.clear();
+        StdDraw.clear(Color.black);
+
+        Font bigFont = new Font("Monaco", Font.BOLD, 40);
+        StdDraw.setFont(bigFont);
+        StdDraw.setPenColor(Color.white);
+        StdDraw.text(((double)WIDTH)/2, ((double)HEIGHT)*3/4, "CS 61B: THE GAME");
+        Font smallFont = new Font("Monaco", Font.BOLD, 20);
+        StdDraw.setFont(smallFont);
+        StdDraw.setPenColor(Color.white);
+        StdDraw.text(((double)WIDTH)/2, 15.0, "New Game(N)");
+        StdDraw.text(((double)WIDTH)/2, 12.0, "Load Game(L)");
+        StdDraw.text(((double)WIDTH)/2, 9.0, "Quit Game(Q)");
+        StdDraw.show();
+    }
+    
+    /**
+     * Method used for autograding and testing the game code. The input string will be a series
+     * of characters (for example, "n123sswwdasdassadwas", "n123sss:q", "lwww". The game should
+     * behave exactly as if the user typed these characters into the game after playing
+     * playWithKeyboard. If the string ends in ":q", the same world should be returned as if the
+     * string did not end with q. For example "n123sss" and "n123sss:q" should return the same
+     * world. However, the behavior is slightly different. After playing with "n123sss:q", the game
+     * should save, and thus if we then called playWithInputString with the string "l", we'd expect
+     * to get the exact same world back again, since this corresponds to loading the saved game.
+     * @param input the input string to feed to your program
+     * @return the 2D TETile[][] representing the state of the world
+     */
+    public TETile[][] playWithInputString(String input) {
+        // TODO: Fill out this method to run the game using the input passed in,
+        // and return a 2D tile representation of the world that would have been
+        // drawn if the same inputs had been given to playWithKeyboard().
+
+        finalWorldFrame = new TETile[WIDTH][HEIGHT];
+        ter.initialize(WIDTH, HEIGHT);
+        
+        Long seed = toDigit(input);
+        System.out.println(seed);
+        PlaceRooms rooms = new PlaceRooms(seed);
+        rooms.initial(finalWorldFrame, Tileset.NOTHING);
+        rooms.addMaze(finalWorldFrame, Tileset.FLOOR);
+        rooms.addWall(finalWorldFrame, Tileset.WALL);
+        this.player = rooms.player;
+        this.door = rooms.door;
+        this.life = new Life(5);
+        finalWorldFrame = drawLife(finalWorldFrame, this.life.life);
+        ter.renderFrame(finalWorldFrame);
+        return finalWorldFrame;
+    }
+    
+    private TETile[][] drawLife(TETile[][] finalWorldFrame, int life){
+        for (int i = 60; i < 70; i++) {
+            finalWorldFrame[i][HEIGHT - 1] = Tileset.NOTHING;
+        }
+        for (int i = WIDTH - 10; i < WIDTH - 10 + life; i++){
+            finalWorldFrame[i][HEIGHT-1] = Tileset.HEART;
+        }
+        return finalWorldFrame;
+    }
+    private Long toDigit(String input){
+        char[] c = input.toCharArray();
+        StringBuilder builder = new StringBuilder("");
+        for (int i = 0; i < input.length(); i++){
+            if (Character.isDigit(c[i])){
+            	builder.append(c[i]);
+            }
+        }
+        long requestLong = Long.parseLong(builder.toString());
+        return requestLong;
+    }
+    public void playerMove(char c){
+        TETile t = Tileset.WALL;
+        if (c == 'w' || c == 'W'){
+            if (!finalWorldFrame[player.x][player.y+1].equals(t)){
+                finalWorldFrame[player.x][player.y] = Tileset.FLOOR;
+                finalWorldFrame[player.x][player.y+1] = Tileset.PLAYER;
+                player = new Position(player.x, player.y+1);
+                if (player.equals(door)){
+                    win = true;
+                }
+            }else{
+            	this.life.life--;
+            }
+        }else if (c == 'a'|| c == 'A'){
+            if (!finalWorldFrame[player.x-1][player.y].equals(t)){
+                finalWorldFrame[player.x][player.y] = Tileset.FLOOR;
+                finalWorldFrame[player.x-1][player.y] = Tileset.PLAYER;
+                player = new Position(player.x-1, player.y);
+                if (player.equals(door)){
+                    win = true;
+                }
+            } else{
+            	this.life.life--;
+            }
+        }else if (c == 's'|| c == 'S'){
+            if (!finalWorldFrame[player.x][player.y-1].equals(t)){
+                finalWorldFrame[player.x][player.y] = Tileset.FLOOR;
+                finalWorldFrame[player.x][player.y-1] = Tileset.PLAYER;
+                player = new Position(player.x, player.y-1);
+                if (player.equals(door)){
+                    win = true;
+                }
+            }else{
+            	this.life.life--;
+            }
+        }else if (c == 'd'|| c == 'D'){
+            if (!finalWorldFrame[player.x+1][player.y].equals(t)){
+                finalWorldFrame[player.x][player.y] = Tileset.FLOOR;
+                finalWorldFrame[player.x+1][player.y] = Tileset.PLAYER;
+                player = new Position(player.x+1, player.y);
+                if (player.equals(door)){
+                    win = true;
+                }
+            }else{
+                this.life.life--;
+            }
+        }else {
+            return ;
+        }
+    }
+    public static void main(String[] args) {
+    	Game game = new Game();
+    	game.playWithKeyboard();
+    }
+    
+}
