@@ -15,8 +15,8 @@ import byog.TileEngine.Tileset;
  */
 
 public class RandomWorldGenerator {
-	private static final int WIDTH = 40;
-    private static final int HEIGHT = 13;
+	private static final int WIDTH = 30;
+    private static final int HEIGHT = 14;
     
     private static final Position START_POSITION = new Position(2, 2);
     private static final Direction initDirection = Direction.RIGHT;
@@ -29,7 +29,7 @@ public class RandomWorldGenerator {
     
     private static Stack<worldNode> worldNodeStack;
    
-    private static Position player;
+    private static final Position player = new Position(2, 2);
     private static Position door;
     
     public RandomWorldGenerator(Long seed) {
@@ -55,7 +55,7 @@ public class RandomWorldGenerator {
     	worldNodeStack = new Stack<worldNode>();
     	for (int x = 0; x < WIDTH; x += 1) {
             for (int y = 0; y < HEIGHT; y += 1) {
-            	randomWorld[x][y] = Tileset.WALL;
+            	randomWorld[x][y] = TileHumanSet.BW_TV;
             	worldDescription[x][y] = new worldNode(new Position(x, y));
             }
         }
@@ -77,16 +77,7 @@ public class RandomWorldGenerator {
             	}
             }
         }
-    	for (int i = 0; i < width; i += 1) {
-            for (int j = 0; j < height; j += 1) {
-            	if(worldDescription[i][j].walls) {
-            		player = new Position(i, j);
-                	randomWorld[player.x][player.y] = TileHumanSet.Kaws;
-            		return;
-            	}
-            }
-        }
-    	
+        randomWorld[player.x][player.y] = TileHumanSet.Kaws;
     }
     
     public static void GenerateClosedWall() {

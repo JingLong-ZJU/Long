@@ -20,8 +20,8 @@ import java.io.*;
 
 public class Game{
     /* Feel free to change the width and height. */
-    public static final int WIDTH = 40;
-    public static final int HEIGHT = 14;
+    public static final int WIDTH = 30;
+    public static final int HEIGHT = 15;
     public TERenderer ter = new TERenderer();
     private static int MouseX;
     private static int MouseY;
@@ -140,35 +140,31 @@ public class Game{
             drawSeed(input);
         }
         Long seed = toDigit(input);
-        PlaceRooms PLACEROOMS = new PlaceRooms(seed);
-        PLACEROOMS.initial(finalWorldFrame, Tileset.NOTHING);
-        PLACEROOMS.addMaze(finalWorldFrame,Tileset.FLOOR);
-        PLACEROOMS.addWall(finalWorldFrame,TileHumanSet.BW_TV);
-        player = PLACEROOMS.player;
-        door = PLACEROOMS.door;
-        life = new Life(5);
-//
-//        RandomWorldGenerator wo = new RandomWorldGenerator(seed);
-//        wo.initialWorld();
-//        wo.GenerateClosedWall();
-//        wo.addWallsToWorld();
-//        TETile[][] getWorld = wo.getRandomWorld();
-//        for(int i = 0; i < getWorld.length; i++) {
-//        	for(int j = 0; j < getWorld[0].length; j++) {
-//        		finalWorldFrame[i][j] = getWorld[i][j];
-//        		shadowWorldFrame[i][j] = finalWorldFrame[i][j];
-//        	}
-//        }
-//        this.player = wo.getPlayer();
-//        this.door = wo.getDoor();
+//        PlaceRooms PLACEROOMS = new PlaceRooms(seed);
+//        PLACEROOMS.initial(finalWorldFrame, Tileset.NOTHING);
+//        PLACEROOMS.addMaze(finalWorldFrame,Tileset.FLOOR);
+//        PLACEROOMS.addWall(finalWorldFrame,TileHumanSet.BW_TV);
+//        player = PLACEROOMS.player;
+//        door = PLACEROOMS.door;
 //        life = new Life(5);
-////        readToStart();
-////        drawHelpQuit();
-//        System.out.println(player.x);
-//        System.out.println(player.y);
-//        drawlife(life.life);
-        drawHelpQuit();
-        ter.renderFrame(finalWorldFrame);
+
+        RandomWorldGenerator wo = new RandomWorldGenerator(seed);
+        wo.initialWorld();
+        wo.GenerateClosedWall();
+        wo.addWallsToWorld();
+        TETile[][] getWorld = wo.getRandomWorld();
+        for(int i = 0; i < getWorld.length; i++) {
+        	for(int j = 0; j < getWorld[0].length; j++) {
+        		finalWorldFrame[i][j] = getWorld[i][j];
+        		shadowWorldFrame[i][j] = finalWorldFrame[i][j];
+        	}
+        }
+        this.player = wo.getPlayer();
+        this.door = wo.getDoor();
+        life = new Life(5);
+//        readToStart();
+//        drawHelpQuit();
+        drawlife(life.life);
         operation();
     }
     
@@ -188,7 +184,9 @@ public class Game{
     }
     
     public void operation(){
-        while (true){
+    	drawHelpQuit();
+        ter.renderFrame(finalWorldFrame);
+    	while (true){
             if(StdDraw.hasNextKeyTyped()){
                 char c = StdDraw.nextKeyTyped();
                 stepWithChar(c);
@@ -274,7 +272,6 @@ public class Game{
      * @return the 2D TETile[][] representing the state of the world
      */
     public TETile[][] playWithInputString(String input) {
-        // TODO: Fill out this method to run the game using the input passed in,
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
         finalWorldFrame = new TETile[WIDTH][HEIGHT];
@@ -352,16 +349,19 @@ public class Game{
             finalWorldFrame[i][HEIGHT-1] = Tileset.NOTHING;
             refreshShadow();
         }
-//    	String d = "Press Q to quit!";
-//    	char[] des = d.toCharArray();
-//        for (int i = 30; i < 30 + des.length; i++){
-//            finalWorldFrame[i][HEIGHT-1] = new TETile (des[i - 30], Color.white, Color.black, "nothing");
-//            refreshShadow();
-//        }
+    	String d = "Press Q to quit!";
+    	char[] des = d.toCharArray();
+        for (int i = 10; i < 10 + des.length; i++){
+            finalWorldFrame[i][HEIGHT-1] = new TETile (des[i - 10], Color.white, Color.black, "nothing");
+            refreshShadow();
+        }
     }
     public void playerMove(char c){
         TETile t = TileHumanSet.BW_TV;
+        TETile destination = Tileset.LOCKED_DOOR;
         if (c == 'w' || c == 'W'){
+        	if(!((player.y+1) < HEIGHT - 1))
+        		return;
             if (!finalWorldFrame[player.x][player.y+1].equals(t)){
                 finalWorldFrame[player.x][player.y] = Tileset.FLOOR;
                 finalWorldFrame[player.x][player.y+1] = TileHumanSet.Kaws;
@@ -370,10 +370,13 @@ public class Game{
                 if (player.equals(door)){
                     win = true;
                 }
-            }else{
+            }
+            else{
                 life.life--;
             }
         }else if (c == 'a'|| c == 'A'){
+        	if(!((player.x-1) >= 0))
+        		return;
             if (!finalWorldFrame[player.x-1][player.y].equals(t)){
                 finalWorldFrame[player.x][player.y] = Tileset.FLOOR;
                 finalWorldFrame[player.x-1][player.y] = TileHumanSet.Kaws;
@@ -386,6 +389,8 @@ public class Game{
                 life.life--;
             }
         }else if (c == 's'|| c == 'S'){
+        	if(!((player.y-1) >= 0))
+        		return;
             if (!finalWorldFrame[player.x][player.y-1].equals(t)){
                 finalWorldFrame[player.x][player.y] = Tileset.FLOOR;
                 finalWorldFrame[player.x][player.y-1] = TileHumanSet.Kaws;
@@ -398,6 +403,8 @@ public class Game{
                 life.life--;
             }
         }else if (c == 'd'|| c == 'D'){
+        	if(!((player.x+1) < WIDTH))
+        		return;
             if (!finalWorldFrame[player.x+1][player.y].equals(t)){
                 finalWorldFrame[player.x][player.y] = Tileset.FLOOR;
                 finalWorldFrame[player.x+1][player.y] = TileHumanSet.Kaws;
@@ -430,7 +437,7 @@ public class Game{
     }
     
     public static void main(String[] args) {
-    	Game game = new Game(0);
+    	Game game = new Game(1);
         game.playWithKeyboard();
     }
     
